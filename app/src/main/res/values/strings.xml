@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">RecyclerBanner</string>
+
+    <string name="test">测试在RecyclerView中嵌套BannerPager</string>
+</resources>
