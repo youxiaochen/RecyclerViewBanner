@@ -18,8 +18,15 @@ public class BannerLayoutManager extends LinearLayoutManager {
      */
     private static final float MILLISECONDS_PER_INCH = 75f;
 
+    private float scrollMill = MILLISECONDS_PER_INCH;
+
     public BannerLayoutManager(Context context) {
         this(context, HORIZONTAL, false);
+        setItemPrefetchEnabled(false);
+    }
+
+    public BannerLayoutManager(Context context, int orientation, float scrollMill) {
+        this(context, orientation, false, scrollMill);
         setItemPrefetchEnabled(false);
     }
 
@@ -28,8 +35,11 @@ public class BannerLayoutManager extends LinearLayoutManager {
         setItemPrefetchEnabled(false);
     }
 
-    public BannerLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
+    public BannerLayoutManager(Context context, int orientation, boolean reverseLayout, float scrollMill) {
+        super(context, orientation, reverseLayout);
+        if (scrollMill > 10f) {
+            this.scrollMill = scrollMill;
+        }
         setItemPrefetchEnabled(false);
     }
 
@@ -44,7 +54,7 @@ public class BannerLayoutManager extends LinearLayoutManager {
         LinearSmoothScroller linearSmoothScroller = new LinearSmoothScroller(recyclerView.getContext()) {
             @Override
             protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
-                return MILLISECONDS_PER_INCH / displayMetrics.densityDpi;
+                return scrollMill / displayMetrics.densityDpi;
             }
         };
         linearSmoothScroller.setTargetPosition(position);

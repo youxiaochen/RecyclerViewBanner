@@ -2,8 +2,10 @@ package you.chen;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import you.chen.adapter.TestAdapter;
 import you.chen.banner.BannerIndicator;
@@ -12,6 +14,10 @@ import you.chen.banner.BannerPager;
 import you.chen.bean.BannerBean;
 
 public class MainActivity extends Activity implements View.OnClickListener {
+
+    BannerPager bp_s;
+    BannerIndicator bi_s;
+
 
     BannerPager bp;
     BannerIndicator bi;
@@ -23,6 +29,24 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        bp_s = (BannerPager) findViewById(R.id.bp_s);
+        bi_s = (BannerIndicator) findViewById(R.id.bi_s);
+        bi_s.setOrientation(LinearLayout.VERTICAL);
+        bi_s.setGravity(Gravity.CENTER_HORIZONTAL);
+        bp_s.setLayoutManager(new BannerLayoutManager(this, BannerLayoutManager.VERTICAL, 150f));
+        TestAdapter adapter_s = new TestAdapter(this);
+        adapter_s.setNewDatas(BannerBean.test2());
+        bi_s.setIndicatorCount(adapter_s.getItemCount());
+        bp_s.addOnPageChangeListener(new BannerPager.OnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                bi_s.setCurrentIndicator(position);
+            }
+        });
+        bp_s.setBannerAdapter(adapter_s);
+
+
+
         bp = (BannerPager) findViewById(R.id.bp);
         bi = (BannerIndicator) findViewById(R.id.bi);
         et = (EditText) findViewById(R.id.et);
@@ -43,6 +67,20 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 bi.setCurrentIndicator(position);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bp.setAutoRun(true);
+        bp_s.setAutoRun(true);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        bp.setAutoRun(false);
+        bp_s.setAutoRun(false);
     }
 
     @Override

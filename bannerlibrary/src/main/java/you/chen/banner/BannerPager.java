@@ -2,6 +2,7 @@ package you.chen.banner;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.SparseArray;
@@ -18,34 +19,70 @@ import java.util.List;
 
 public class BannerPager extends RecyclerView {
     /**
+     * 滑动与较正消息
+     */
+    private static final int SCROLL_MSG = 1, CHECK_MSG = 2;
+    /**
      * 默认切换一次动画间隔
      */
     private static final int DEFAULT_DELAY = 5000;
-
-    static final int SCROLL_MAX = 100;
-
-    static final int SCROLL_COUNT = 10;
-
-    static final int SCROLL_LEFT = SCROLL_MAX - SCROLL_COUNT;
-
+    /**
+     * 默认较正延时时间,必须小于动画间隔时间
+     */
+    private static final int DEFCHECK_DELAY = 1000;
+    /**
+     * 左右两侧可滑动的最大值, 实际itemCount + SCROLL_MAX, 此参数必须大于SCROLL_COUNT
+     */
+    static final int SCROLL_MAX = 10;
+    /**
+     *  列表左边缘时的最大值, 由于RecyclerView在多指触控滑动下,可以滑动多个界面, 因此要预留多个item,
+     */
+    static final int SCROLL_LEFT = 3;
+    /**
+     * 列表右边缘时的最大值, 不论左右边缘时都要较正到正确位置中
+     */
+    static final int SCROLL_RIGHT = SCROLL_MAX - SCROLL_LEFT;
     /**
      * 执行Runnable
      */
-    private Handler handler = new Handler();
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case CHECK_MSG:
+                    //Log.i("you", "check to position ");
+                    int toPosition = SCROLL_LEFT + currentItem;
+                    scrollToPosition(toPosition);
+                    currentPosition = toPosition;
+                    break;
+                case SCROLL_MSG:
+                    if (adapter != null && hasAttachedToWindow) {
+                        if (adapter.getItemCount() > 1) {
+                            //Log.i("you", "scrollto  " + (currentPosition+1));
+                            smoothScrollToPosition(currentPosition + 1);
+                        }
+                        handler.sendEmptyMessageDelayed(SCROLL_MSG, DEFAULT_DELAY);
+                    }
+                    break;
+            }
+        }
+    };
     /**
-     * 定时滑动Runnable
+     * 当前item
      */
-    private PostRunnable runnable = new PostRunnable();
-
     private int currentItem = NO_POSITION;
-
+    /**
+     * 当前位置
+     */
     private int currentPosition = NO_POSITION;
 
     /**
      * 针对RecyclerView的修改
      */
     private boolean hasAttachedToWindow;
-
+    /**
+     * 代理adapter
+     */
     private ProxyAdapter proxyAdapter;
 
     private BannerAdapter adapter;
@@ -70,15 +107,14 @@ public class BannerPager extends RecyclerView {
         this.setOnFlingListener(new BannerSnap(this) {
             @Override
             protected void onSnap(View snapView) {
+                handler.removeMessages(CHECK_MSG);
                 if (adapter == null) return;
                 int itemCount = adapter.getItemCount();
                 if (itemCount < 2) return;
                 currentPosition = getChildAdapterPosition(snapView);
                 currentItem = adapter.getBannerPosition(currentPosition);
-                if (currentPosition <= SCROLL_COUNT || currentPosition >= itemCount + SCROLL_LEFT) {
-                    int toPosition = SCROLL_COUNT + currentItem;
-                    scrollToPosition(toPosition);
-                    currentPosition = toPosition;
+                if (currentPosition <= SCROLL_LEFT || currentPosition >= itemCount + SCROLL_RIGHT) {
+                    handler.sendEmptyMessageDelayed(CHECK_MSG, DEFCHECK_DELAY);
                 }
                 if (mOnPageChangeListeners != null) {
                     for (OnPageChangeListener listener : mOnPageChangeListeners) {
@@ -107,9 +143,10 @@ public class BannerPager extends RecyclerView {
      * 设置自动滑动
      */
     public void setAutoRun(boolean isAuto) {
-        handler.removeCallbacks(runnable);
+        handler.removeMessages(CHECK_MSG);
+        handler.removeMessages(SCROLL_MSG);
         if (isAuto && adapter != null) {
-            handler.postDelayed(runnable, DEFAULT_DELAY);
+            handler.sendEmptyMessageDelayed(SCROLL_MSG, DEFAULT_DELAY);
         }
     }
 
@@ -147,8 +184,8 @@ public class BannerPager extends RecyclerView {
             super.setAdapter(this.proxyAdapter);
             int itemCount = adapter.getItemCount();
             if (itemCount > 1) {
-                currentPosition = SCROLL_COUNT;
-                scrollToPosition(SCROLL_COUNT);
+                currentPosition = SCROLL_LEFT;
+                scrollToPosition(SCROLL_LEFT);
             }
             setAutoRun(true);
         } else {
@@ -169,7 +206,7 @@ public class BannerPager extends RecyclerView {
 
     public void setCurrentItem(int currentItem) {
         if (adapter == null || this.currentItem == currentItem || currentItem > adapter.getItemCount()) return;
-        currentPosition = SCROLL_COUNT + currentItem;
+        currentPosition = SCROLL_LEFT + currentItem;
         scrollToPosition(currentPosition);
     }
 
@@ -178,8 +215,8 @@ public class BannerPager extends RecyclerView {
             proxyAdapter.notifyDataSetChanged();
             int itemCount = adapter.getItemCount();
             if (itemCount > 1) {
-                scrollToPosition(SCROLL_COUNT);
-                currentPosition = SCROLL_COUNT;
+                scrollToPosition(SCROLL_LEFT);
+                currentPosition = SCROLL_LEFT;
             }
         }
     }
@@ -246,7 +283,7 @@ public class BannerPager extends RecyclerView {
         public final int getBannerPosition(int position) {
             int itemCount = getItemCount();
             if (itemCount < 2) return position;
-            int subCount = SCROLL_COUNT % itemCount;
+            int subCount = SCROLL_LEFT % itemCount;
             if (subCount  == 0) {
                 return position % itemCount;
             }
@@ -388,23 +425,6 @@ public class BannerPager extends RecyclerView {
          * @param position Position index of the new selected page.
          */
         void onPageSelected(int position);
-    }
-
-    /**
-     * 定时器
-     */
-    class PostRunnable implements Runnable {
-        @Override
-        public void run() {
-            if (adapter != null && hasAttachedToWindow) {
-                if (adapter.getItemCount() > 1) {
-                    //Log.i("you", "current " + currentPosition);
-                    smoothScrollToPosition(currentPosition + 1);
-                }
-                //还需要继续定时,如果适配器从0个刷新致多个
-                handler.postDelayed(this, DEFAULT_DELAY);
-            }
-        }
     }
 
 }

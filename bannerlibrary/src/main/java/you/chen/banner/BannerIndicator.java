@@ -72,7 +72,12 @@ public class BannerIndicator extends LinearLayout {
     protected LayoutParams params(int position) {
         LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         if (position > 0) {
-            params.leftMargin = indicatorMargin;
+            if (getOrientation() == HORIZONTAL) {
+                params.leftMargin = indicatorMargin;
+            } else {
+                params.topMargin = indicatorMargin;
+            }
+
         }
         return params;
     }

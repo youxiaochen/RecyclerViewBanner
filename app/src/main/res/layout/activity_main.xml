@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_main"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -8,7 +9,33 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="点击Item"/>
+        android:text="可以点击Item"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp">
+
+        <you.chen.banner.BannerPager
+            android:id="@+id/bp_s"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <you.chen.banner.BannerIndicator
+            android:id="@+id/bi_s"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="15dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            app:indicatorDrawableRes="@drawable/bg_banner"
+            app:indicatorMargin="06dp"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:text="这是垂直版的"/>
 
     <include layout="@layout/public_bannerpager"/>
 
