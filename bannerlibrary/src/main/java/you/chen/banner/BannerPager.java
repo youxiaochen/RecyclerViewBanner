@@ -56,7 +56,7 @@ public class BannerPager extends RecyclerView {
                     currentPosition = toPosition;
                     break;
                 case SCROLL_MSG:
-                    if (adapter != null && hasAttachedToWindow) {
+                    if (adapter != null && hasAttachedToWindow && isAuto) {
                         if (adapter.getItemCount() > 1) {
                             //Log.i("you", "scrollto  " + (currentPosition+1));
                             smoothScrollToPosition(currentPosition + 1);
@@ -86,6 +86,8 @@ public class BannerPager extends RecyclerView {
     private ProxyAdapter proxyAdapter;
 
     private BannerAdapter adapter;
+    
+    private boolean isAuto;
 
     public BannerPager(Context context) {
         super(context);
@@ -143,6 +145,7 @@ public class BannerPager extends RecyclerView {
      * 设置自动滑动
      */
     public void setAutoRun(boolean isAuto) {
+        this.isAuto = isAuto;
         handler.removeMessages(CHECK_MSG);
         handler.removeMessages(SCROLL_MSG);
         if (isAuto && adapter != null) {
