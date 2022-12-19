@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- BannerPager -->
+    <declare-styleable name="BannerPager">
+
+        <!-- 布局方向 -->
+        <attr name="bannerOrientation">
+            <enum name="vertical" value="1" />
+            <enum name="horizontal" value="0" />
+        </attr>
+
+        <!-- 自动轮播动画时间, 为0时按原始 -->
+        <attr name="bannerDuration" format="integer" />
+
+        <!-- 轮播间隔 -->
+        <attr name="bannerInterval" format="integer" />
+
+        <!-- 自动轮播 -->
+        <attr name="bannerAuto" format="boolean" />
+
+    </declare-styleable>
+
+    <declare-styleable name="IndicatorView">
+
+        <attr name="indicatorMargin" format="dimension" />
+
+        <attr name="indicatorDrawable" format="reference" />
+
+        <attr name="indicatorOrientation">
+            <enum name="vertical" value="1" />
+            <enum name="horizontal" value="0" />
+        </attr>
+
+    </declare-styleable>
+
+</resources>

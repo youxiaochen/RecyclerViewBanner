@@ -9,35 +9,61 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="可以点击Item"/>
+        android:text="可以点击Item, 这是垂直版的"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="120dp">
 
-        <you.chen.banner.BannerPager
-            android:id="@+id/bp_s"
+        <chen.you.banner.BannerPager
+            android:id="@+id/bp0"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            app:bannerOrientation="vertical"
+            app:bannerDuration="1000"
+            app:bannerInterval="3000"
+            app:bannerAuto="true"/>
 
-        <you.chen.banner.BannerIndicator
-            android:id="@+id/bi_s"
+        <chen.you.banner.IndicatorView
+            android:id="@+id/iv0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingRight="15dp"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            app:indicatorDrawableRes="@drawable/bg_banner"
-            app:indicatorMargin="06dp"/>
+            android:layout_marginRight="20dp"
+            app:indicatorDrawable="@drawable/bg_banner"
+            app:indicatorOrientation="vertical"
+            app:indicatorMargin="10dp"/>
 
     </RelativeLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="80dp"
-        android:text="这是垂直版的"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginTop="15dp">
 
-    <include layout="@layout/public_bannerpager"/>
+        <chen.you.banner.BannerPager
+            android:id="@+id/bp1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:bannerOrientation="horizontal"
+            app:bannerDuration="1000"
+            app:bannerInterval="3000"
+            app:bannerAuto="true"/>
+
+        <chen.you.banner.IndicatorView
+            android:id="@+id/iv1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="10dp"
+            app:indicatorDrawable="@drawable/bg_banner2"
+            app:indicatorOrientation="horizontal"
+            app:indicatorMargin="10dp"/>
+
+    </FrameLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -66,27 +92,7 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:orientation="horizontal">
-
-        <EditText android:id="@+id/et"
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:layout_height="match_parent"
-            android:inputType="number"
-            android:hint="输入要跳到的位置"/>
-
-        <Button android:id="@+id/bt4"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:text="跳到此位置"/>
-
-    </LinearLayout>
-
-    <Button android:id="@+id/bt5"
+    <Button android:id="@+id/bt4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/test"/>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="120dp">
+
+    <chen.you.banner.BannerPager
+        android:id="@+id/bp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:bannerOrientation="horizontal"
+        app:bannerDuration="1000"
+        app:bannerInterval="3000"
+        app:bannerAuto="true"/>
+
+    <chen.you.banner.IndicatorView
+        android:id="@+id/iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="10dp"
+        app:indicatorDrawable="@drawable/bg_banner2"
+        app:indicatorOrientation="horizontal"
+        app:indicatorMargin="10dp"/>
+
+</FrameLayout>
