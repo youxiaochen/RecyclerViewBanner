@@ -21,12 +21,16 @@
 
     </declare-styleable>
 
+    <!-- IndicatorView 指示器 -->
     <declare-styleable name="IndicatorView">
 
+        <!-- 指示器间隙 -->
         <attr name="indicatorMargin" format="dimension" />
 
+        <!-- 指示背景需要配置 state_selected true与false 的属性-->
         <attr name="indicatorDrawable" format="reference" />
 
+        <!-- 布局方向 -->
         <attr name="indicatorOrientation">
             <enum name="vertical" value="1" />
             <enum name="horizontal" value="0" />

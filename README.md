@@ -11,6 +11,104 @@
 #### 7: 实现无限循环有两种机制, 1: 把itemcount设置成Integer.Max_VALUE, 但是在页面刷新setCurrentItem的时候会出现卡顿ANR  2: 在实际的iteCount前后添加最后一个和第一个item, 但是ViewPager是需要预加载的, 在滑动到最后一项快速换位的时候,会出现空白 
 
 
+####使用
+
+```
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }  
+}
+
+dependencies {
+	implementation 'com.github.youxiaochen:RecyclerViewBanner:1.2.0'
+}
+```
+
+####属性描述
+```
+<!-- BannerPager -->
+<declare-styleable name="BannerPager">
+
+    <!-- 布局方向 -->
+    <attr name="bannerOrientation">
+        <enum name="vertical" value="1" />
+        <enum name="horizontal" value="0" />
+    </attr>
+
+    <!-- 自动轮播动画时间, 为0时按原始 -->
+    <attr name="bannerDuration" format="integer" />
+
+    <!-- 轮播间隔 -->
+    <attr name="bannerInterval" format="integer" />
+
+    <!-- 自动轮播 -->
+    <attr name="bannerAuto" format="boolean" />
+
+</declare-styleable>
+
+<!-- IndicatorView 指示器 -->
+<declare-styleable name="IndicatorView">
+
+    <!-- 指示器间隙 -->
+    <attr name="indicatorMargin" format="dimension" />
+
+    <!-- 指示背景需要配置 state_selected true与false 的属性-->
+    <attr name="indicatorDrawable" format="reference" />
+
+    <!-- 布局方向 -->
+    <attr name="indicatorOrientation">
+        <enum name="vertical" value="1" />
+        <enum name="horizontal" value="0" />
+    </attr>
+
+</declare-styleable>
+```
 
 
+```
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="120dp">
 
+    <chen.you.banner.BannerPager
+        android:id="@+id/bp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:bannerOrientation="horizontal"
+        app:bannerDuration="1000"
+        app:bannerInterval="3000"
+        app:bannerAuto="true"/>
+
+    <chen.you.banner.IndicatorView
+        android:id="@+id/iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="10dp"
+        app:indicatorDrawable="@drawable/bg_banner2"
+        app:indicatorOrientation="horizontal"
+        app:indicatorMargin="10dp"/>
+
+</FrameLayout>
+
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="false" android:drawable="@drawable/banner"/>
+    <item android:state_selected="true" android:drawable="@drawable/banner_s"/>
+</selector>
+
+```
+
+####代码控制
+```
+BannerPager bp = findViewById(R.id.bp);
+IndicatorView iv = findViewById(R.id.iv);
+bp.setLifecycleOwner(this);  //设置生命管理
+bp.setupWithIndicator(iv1); //绑定指示器
+
+bp0.setAdapter(......);
+```
