@@ -6,22 +6,28 @@ import androidx.annotation.NonNull;
 import androidx.viewpager2.widget.ViewPager2;
 
 /**
- * author: you : 2022/12/16
+ * author: you : 2020/06/13
  */
 public final class ScaleInTransformer implements ViewPager2.PageTransformer {
-
     public static final float DEFAULT_CENTER = 0.5f;
-
     private static final float DEFAULT_MIN_SCALE = 0.85f;
-    private float mMinScale = DEFAULT_MIN_SCALE;
+
+    private final float mMinScale;
+
+    public ScaleInTransformer() {
+        this(DEFAULT_MIN_SCALE);
+    }
+
+    public ScaleInTransformer(float minScale) {
+        this.mMinScale = minScale;
+    }
 
     @Override
     public void transformPage(@NonNull View view, float position) {
         int pageWidth = view.getWidth();
         int pageHeight = view.getHeight();
-
-        view.setPivotY(pageHeight / 2);
-        view.setPivotX(pageWidth / 2);
+        view.setPivotY(pageHeight / 2.f);
+        view.setPivotX(pageWidth / 2.f);
         if (position < -1) { // [-Infinity,-1)
             // This page is way off-screen to the left.
             view.setScaleX(mMinScale);

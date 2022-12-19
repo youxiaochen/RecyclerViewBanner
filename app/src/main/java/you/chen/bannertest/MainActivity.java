@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import chen.you.banner.BannerPager;
 import chen.you.banner.IndicatorView;
+import chen.you.banner.transformer.ZoomOutTransformer;
 import you.chen.bannertest.bean.BannerBean;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         iv1 = findViewById(R.id.iv1);
         bp1.setLifecycleOwner(this);
         bp1.setupWithIndicator(iv1);
+        bp1.setPageTransformer(new ZoomOutTransformer());
 
         bp0.setAdapter(new TestAdapter(this, BannerBean.test2()));
 

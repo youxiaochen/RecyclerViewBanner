@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 /**
- *  Created by You on 2019/3/18.
+ *  author: you : 2020/06/13
  *
  */
 public final class MultipleScaleInTransformer implements ViewPager2.PageTransformer {

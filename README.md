@@ -109,6 +109,7 @@ BannerPager bp = findViewById(R.id.bp);
 IndicatorView iv = findViewById(R.id.iv);
 bp.setLifecycleOwner(this);  //设置生命管理
 bp.setupWithIndicator(iv1); //绑定指示器
+bp.setPageTransformer(new ZoomOutTransformer()); //设置PageTransformer各种特效
 
 bp0.setAdapter(......);
 ```

@@ -6,11 +6,21 @@ import androidx.annotation.NonNull;
 import androidx.viewpager2.widget.ViewPager2;
 
 /**
- * author: you : 2022/12/16
+ * author: you : 2020/06/13
  */
 public final class AlphaTransformer implements ViewPager2.PageTransformer {
 
-    private float mMinAlpha = 0.5f;
+    private static final float DEFAULT_MIN_ALPHA = 0.5f;
+
+    private final float mMinAlpha;
+
+    public AlphaTransformer() {
+        this(DEFAULT_MIN_ALPHA);
+    }
+
+    public AlphaTransformer(float minAlpha) {
+        this.mMinAlpha = minAlpha;
+    }
 
     @Override
     public void transformPage(@NonNull View page, float position) {
