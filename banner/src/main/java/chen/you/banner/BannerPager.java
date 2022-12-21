@@ -259,6 +259,7 @@ public final class BannerPager extends ViewGroup {
     @SuppressLint("NotifyDataSetChanged")
     private void onDataSetChanged() {
         boolean stopScroll = stopScroll();
+        mPagerAdapter.mItemCounts = null;
         mPagerAdapter.notifyDataSetChanged();
         if (!stopScroll) start();
         for (OnBannerChangeListener listener : mBannerChangeListeners) {
@@ -617,10 +618,10 @@ public final class BannerPager extends ViewGroup {
     static class ProxyPagerAdapter extends RecyclerView.Adapter<BannerViewHolder> {
         //BannerPager Adapter
         Adapter adapter;
-        //记录下itemCount
-        int mItemCount = 0;
         //代理计算的索引分割位置
         int subCount = 0;
+        //代理的总数量
+        Integer mItemCounts = null;
 
         ProxyPagerAdapter() {
             setHasStableIds(true);
@@ -628,15 +629,20 @@ public final class BannerPager extends ViewGroup {
 
         @Override
         public int getItemCount() {
-            mItemCount = 0;
-            if (adapter != null) {
-                mItemCount = adapter.getItemCount();
-                if (mItemCount >= DEF_LOOP_COUNT) {
-                    subCount = PROXY_EDGE % mItemCount;
-                    mItemCount += PROXY_ADDITION;
+            if (mItemCounts == null) {
+                subCount = 0;
+                if (adapter == null) {
+                    mItemCounts = 0;
+                } else {
+                    int itemCount = adapter.getItemCount();
+                    if (itemCount >= DEF_LOOP_COUNT) {
+                        subCount = PROXY_EDGE % itemCount;
+                        itemCount += PROXY_ADDITION;
+                    }
+                    mItemCounts = itemCount;
                 }
             }
-            return mItemCount;
+            return mItemCounts;
         }
 
         @Override
@@ -677,13 +683,13 @@ public final class BannerPager extends ViewGroup {
             if (adapter != null) adapter.onViewDetachedFromWindow(holder.viewHolder);
         }
 
-        boolean needProxy() {
-            return adapter != null && adapter.getItemCount() >= DEF_LOOP_COUNT;
-        }
-
         @Override
         public long getItemId(int position) {
             return getProxyIndex(position);
+        }
+
+        boolean needProxy() {
+            return adapter != null && adapter.getItemCount() >= DEF_LOOP_COUNT;
         }
 
         int getProxyIndex(int position) {
@@ -692,7 +698,7 @@ public final class BannerPager extends ViewGroup {
         }
 
         int getCorrectIndex(int position) {
-            if (needProxy() && (position < PROXY_EDGE || position >= mItemCount - PROXY_EDGE)) {
+            if (needProxy() && (position < PROXY_EDGE || position >= getItemCount() - PROXY_EDGE)) {
                 return countProxyIndex(position) + PROXY_EDGE;
             }
             return -1;
