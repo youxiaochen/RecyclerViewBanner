@@ -259,7 +259,7 @@ public final class BannerPager extends ViewGroup {
     @SuppressLint("NotifyDataSetChanged")
     private void onDataSetChanged() {
         boolean stopScroll = stopScroll();
-        mPagerAdapter.mItemCounts = null;
+        mPagerAdapter.refreshCount();
         mPagerAdapter.notifyDataSetChanged();
         if (!stopScroll) start();
         for (OnBannerChangeListener listener : mBannerChangeListeners) {
@@ -307,7 +307,7 @@ public final class BannerPager extends ViewGroup {
         if (mLifecycleOwner == lifecycleOwner) {
             return;
         }
-        if (mLifecycleOwner != null) {
+        if (mLifecycleOwner != null && mOnStartListener != null) {
             mLifecycleOwner.getLifecycle().removeObserver(mOnStartListener);
         }
         mLifecycleOwner = lifecycleOwner;
@@ -627,10 +627,14 @@ public final class BannerPager extends ViewGroup {
             setHasStableIds(true);
         }
 
+        void refreshCount() {
+            mItemCounts = null;
+            subCount = 0;
+        }
+
         @Override
         public int getItemCount() {
             if (mItemCounts == null) {
-                subCount = 0;
                 if (adapter == null) {
                     mItemCounts = 0;
                 } else {
