@@ -22,7 +22,7 @@ allprojects {
 }
 
 dependencies {
-	implementation 'com.github.youxiaochen:RecyclerViewBanner:1.2.0'
+	implementation 'com.github.youxiaochen:RecyclerViewBanner:1.2.1'
 }
 ```
 
