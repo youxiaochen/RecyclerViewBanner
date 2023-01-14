@@ -70,7 +70,7 @@ dependencies {
 
 ![效果2](Images/demo1.gif)
 
-#### 示例代码
+#### 示例代码, 指示器indicatorDrawable背景样式可以任意配置
 
 ```
 <?xml version="1.0" encoding="utf-8"?>

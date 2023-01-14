@@ -6,8 +6,11 @@ import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 
 import androidx.annotation.IntDef;
@@ -94,6 +97,17 @@ public final class BannerPager extends ViewGroup {
     private final Rect mContainerRect = new Rect();
     private final Rect mChildRect = new Rect();
 
+    //触摸滑动最小单位
+    private int mTouchSlop;
+    //初始按下的坐标点
+    private float mInitialTouchX;
+    private float mInitialTouchY;
+    //是否正在拖动
+    private boolean isBeingDragged;
+    //在垂直或水平达到滑动临界点时, 滑动方向与布局不一致时即不可滑动,让父控件优化滑动
+    //默认优化判断此能否滑动
+    private boolean canScroll = true;
+
     public BannerPager(@NonNull Context context) {
         super(context);
         init(context, null);
@@ -132,6 +146,8 @@ public final class BannerPager extends ViewGroup {
 
         pageChangeCallback = new ProxyPageChangeCallback();
         super.addView(mViewPager2, -1, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+
+        mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     }
 
     @Override
@@ -189,6 +205,48 @@ public final class BannerPager extends ViewGroup {
         hasAttachedToWindow = false;
         mViewPager2.unregisterOnPageChangeCallback(pageChangeCallback);
         stop();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mInitialTouchX = ev.getX();
+                mInitialTouchY = ev.getY();
+                isBeingDragged = false;
+                canScroll = true;
+                //先请求放行, 在滑动时再处理是否需要滑动, 不滑时再让父控件滑动
+                getParent().requestDisallowInterceptTouchEvent(true);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (isBeingDragged || !canScroll) return  super.dispatchTouchEvent(ev);
+                float dx = Math.abs(ev.getX() - mInitialTouchX);
+                float dy = Math.abs(ev.getY() - mInitialTouchY);
+                if (dx > mTouchSlop || dy > mTouchSlop) {
+                    //达到滑动临界点, 要么能滑动, 要么不处理, 这里在down到up/cancel只会执行一次
+                    if (mPagerAdapter.needProxy()) {
+                        boolean isVertical = orientation == VERTICAL;
+                        if (dx >= dy) {
+                            if (!isVertical) {
+                                return isBeingDragged = true;
+                            }
+                        } else {
+                            if (isVertical) {
+                                return isBeingDragged = true;
+                            }
+                        }
+                    }
+                    canScroll = false;
+                    getParent().requestDisallowInterceptTouchEvent(false);
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                isBeingDragged = false;
+                canScroll = true;
+                break;
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
     /**
@@ -768,4 +826,5 @@ public final class BannerPager extends ViewGroup {
             indicatorView.setSelectIndexOffset(index, indexOffset);
         }
     }
+
 }
